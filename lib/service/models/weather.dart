@@ -26,6 +26,15 @@ class Weather {
         hourly: List<Current>.from(json["hourly"].map((x) => Current.fromJson(x))),
         // daily: List<Daily>.from(json["daily"].map((x) => Daily.fromJson(x))),
     );
+
+    Map<String, dynamic> toJson() => {
+        "lat": lat,
+        "lon": lon,
+        "timezone": timezone,
+        "current": current!.toJson(),
+        "hourly": List.from(hourly!.map((x) => x.toJson())),
+        // "daily": List<dynamic>.from(daily.map((x) => x.toJson())),
+    };
 }
 
 class Current {
@@ -74,12 +83,30 @@ class Current {
         uvi: json["uvi"].toDouble(),
         clouds: json["clouds"],
         visibility: json["visibility"],
-        windSpeed: json["wind_speed"],
+        windSpeed: json["wind_speed"].toDouble(),
         windDeg: json["wind_deg"],
         windGust: json["wind_gust"],
-        weather: WeatherElement.fromJson(json["weather"][0]),
+        weather: WeatherElement.fromJson(json["weather"] is List?json["weather"][0]:json["weather"]),
         // pop: json["pop"],
     );
+
+    Map<String, dynamic> toJson() => {
+        "dt": dt,
+        "sunrise": sunrise,
+        "sunset": sunset,
+        "temp": temp,
+        "pressure": pressure,
+        "humidity": humidity,
+        "dew_point": dewPoint,
+        "uvi": uvi,
+        "clouds": clouds,
+        "visibility": visibility,
+        "wind_speed": windSpeed,
+        "wind_deg": windDeg,
+        "wind_gust": windGust,
+        "weather": weather!.toJson(),
+    };
+
 }
 
 class WeatherElement {
@@ -101,27 +128,34 @@ class WeatherElement {
         description: json["description"],
         icon: json["icon"],
     );
+
+    Map<String, dynamic> toJson() => {
+        "id": id,
+        "main": main,
+        "description": description,
+        "icon": icon,
+    };
 }
 
-enum Description { BROKEN_CLOUDS, SCATTERED_CLOUDS, OVERCAST_CLOUDS, LIGHT_RAIN, MODERATE_RAIN, CLEAR_SKY, FEW_CLOUDS }
+// enum Description { BROKEN_CLOUDS, SCATTERED_CLOUDS, OVERCAST_CLOUDS, LIGHT_RAIN, MODERATE_RAIN, CLEAR_SKY, FEW_CLOUDS }
 
-final descriptionValues = EnumValues({
-    "broken clouds": Description.BROKEN_CLOUDS,
-    "clear sky": Description.CLEAR_SKY,
-    "few clouds": Description.FEW_CLOUDS,
-    "light rain": Description.LIGHT_RAIN,
-    "moderate rain": Description.MODERATE_RAIN,
-    "overcast clouds": Description.OVERCAST_CLOUDS,
-    "scattered clouds": Description.SCATTERED_CLOUDS
-});
+// final descriptionValues = EnumValues({
+//     "broken clouds": Description.BROKEN_CLOUDS,
+//     "clear sky": Description.CLEAR_SKY,
+//     "few clouds": Description.FEW_CLOUDS,
+//     "light rain": Description.LIGHT_RAIN,
+//     "moderate rain": Description.MODERATE_RAIN,
+//     "overcast clouds": Description.OVERCAST_CLOUDS,
+//     "scattered clouds": Description.SCATTERED_CLOUDS
+// });
 
-enum Main { CLOUDS, RAIN, CLEAR }
+// enum Main { CLOUDS, RAIN, CLEAR }
 
-final mainValues = EnumValues({
-    "Clear": Main.CLEAR,
-    "Clouds": Main.CLOUDS,
-    "Rain": Main.RAIN
-});
+// final mainValues = EnumValues({
+//     "Clear": Main.CLEAR,
+//     "Clouds": Main.CLOUDS,
+//     "Rain": Main.RAIN
+// });
 
 class Daily {
     Daily({

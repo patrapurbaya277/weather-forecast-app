@@ -78,8 +78,9 @@ class _DashboardPageState extends State<DashboardPage> {
             ? Center(
                 child: Image.asset(
                   "assets/images/appIcon.png",
-                  height: 200,
-                  width: 200,
+                  height: 100,
+                  width: 100,
+                  errorBuilder: (context, child, stacktrace) => Container(),
                 ),
               )
             : BlocProvider<WeatherCubit>(
@@ -113,6 +114,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               state.errorMessage!,
                               style: const TextStyle(
                                 fontSize: 24,
+                                color: Colors.white,
                               ),
                             ),
                             const SizedBox(height: 8),
@@ -129,6 +131,13 @@ class _DashboardPageState extends State<DashboardPage> {
                         )),
                       );
                     }
+                    SystemChrome.setSystemUIOverlayStyle(
+                      const SystemUiOverlayStyle(
+                        systemNavigationBarColor: Color(0xff000918),
+                        statusBarColor: Color(0xff82DAF4),
+                        statusBarIconBrightness: Brightness.light,
+                      ),
+                    );
                     return SingleChildScrollView(
                       child: Stack(
                         children: [
@@ -201,10 +210,10 @@ class _DashboardPageState extends State<DashboardPage> {
                                   height: MediaQuery.of(context).size.height,
                                   width: double.infinity,
                                   color: Colors.black.withOpacity(0.5),
-                                  child: Center(
-                                      child: CircularProgressIndicator()),
+                                  child: const Center(
+                                      child:  CircularProgressIndicator()),
                                 )
-                              : SizedBox(),
+                              : const SizedBox(),
                         ],
                       ),
                     );
@@ -260,7 +269,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         fontWeight: FontWeight.bold,
                         color: Colors.white)),
                 Text(
-                    "Today, ${DateFormat("dd MMMM yyyy").format(state.updatedAt ?? DateTime.now())}",
+                    "${checkDayTop(state.updatedAt!)}, ${DateFormat("dd MMMM yyyy").format(state.updatedAt ?? DateTime.now())}",
                     style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w300,
@@ -372,9 +381,9 @@ class _DashboardPageState extends State<DashboardPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                "Today",
-                style: TextStyle(
+              Text(
+                checkDayBottom(state.updatedAt!),
+                style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
@@ -401,7 +410,11 @@ class _DashboardPageState extends State<DashboardPage> {
           height: 100,
           child: ListView.builder(
             shrinkWrap: true,
-            itemCount: 24,
+            itemCount: state.weatherData!.hourly!
+                .where((element) =>
+                    DateTime.now().day ==
+                    DateTime.fromMillisecondsSinceEpoch(element.dt! * 1000).day)
+                .length,
             itemBuilder: (context, index) => HourlyItem(
               data: state.weatherData!.hourly![index],
             ),
@@ -424,8 +437,16 @@ class _DashboardPageState extends State<DashboardPage> {
             url,
             fit: BoxFit.cover,
             color: Colors.white.withOpacity(0.2),
+            frameBuilder: (context, child, x, y) => SizedBox(
+              width: MediaQuery.of(context).size.width / 1.25,
+              height: MediaQuery.of(context).size.width / 1.875,
+            ),
             width: MediaQuery.of(context).size.width / 1.25,
             height: MediaQuery.of(context).size.width / 1.875,
+            errorBuilder: (context, child, stacktrace) => SizedBox(
+              width: MediaQuery.of(context).size.width / 1.25,
+              height: MediaQuery.of(context).size.width / 1.875,
+            ),
           ),
           Image.network(
             url,
@@ -433,9 +454,35 @@ class _DashboardPageState extends State<DashboardPage> {
             width: MediaQuery.of(context).size.width / 1.5,
             height: MediaQuery.of(context).size.width / 2.25,
             filterQuality: FilterQuality.high,
+            errorBuilder: (context, child, stacktrace) => SizedBox(
+              width: MediaQuery.of(context).size.width / 1.5,
+              height: MediaQuery.of(context).size.width / 2.25,
+            ),
           ),
         ],
       ),
     );
+  }
+
+  String checkDayTop(DateTime date) {
+    DateTime today = DateTime.now();
+    if (date.day == today.day) {
+      return "Today";
+    } else if (date.day == today.day - 1) {
+      return "Yesterday";
+    } else {
+      return DateFormat("dddd").format(date);
+    }
+  }
+
+  String checkDayBottom(DateTime date) {
+    DateTime today = DateTime.now();
+    if (date.day == today.day) {
+      return "Today";
+    } else if (date.day == today.day - 1) {
+      return "Yesterday";
+    } else {
+      return DateFormat("dd MM yyyy").format(date);
+    }
   }
 }

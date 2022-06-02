@@ -18,15 +18,20 @@ class HourlyItem extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-           Text(
-            "${data.temp}°",
-            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-          Image.network("https://openweathermap.org/img/wn/${data.weather!.icon}.png"),
           Text(
-            DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(data.dt!*1000)),
-            style: TextStyle(color: Colors.grey),
-          )
+            "${data.temp}°",
+            style: const TextStyle(
+                fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+          Image.network(
+            "https://openweathermap.org/img/wn/${data.weather!.icon}.png",
+            errorBuilder: (context, child, stacktrace) => const SizedBox(height: 20),
+          ),
+          Text(
+            DateFormat("hh:mm")
+                .format(DateTime.fromMillisecondsSinceEpoch(data.dt! * 1000)),
+            style: const TextStyle(color: Colors.grey),
+          ),
         ],
       ),
     );
