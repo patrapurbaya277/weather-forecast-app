@@ -17,10 +17,10 @@ class WeatherCubit extends Cubit<WeatherState>{
       emit(state.copyWith(weatherData: data, updatedAt: DateTime.now()));
     }else{
       if(data is NoConnectionException){
-        // if(Pref.recentWeather!=null){
-        //   emit(state.copyWith(weatherData: Pref.recentWeather, updatedAt: Pref.recentDate));
-        // }
-        emit(state.copyWith(weatherData: Pref.recentWeather, updatedAt: Pref.recentDate));
+        if(Pref.recentWeather!=null){
+          Pref.load();
+          emit(state.copyWith(weatherData: Pref.recentWeather, updatedAt: Pref.recentDate));
+        }
       }
       emit(state.copyWith(errorMessage: data.prefix));
     }
