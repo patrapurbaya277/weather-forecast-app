@@ -26,12 +26,12 @@ class _MainPageState extends State<MainPage>
   void initState() {
     super.initState();
     Pref.load();
+    checkLocation();
     _controller = FancyDrawerController(
         vsync: this, duration: const Duration(milliseconds: 250))
       ..addListener(() {
         setState(() {});
       });
-    checkLocation();
   }
 
   @override
@@ -42,12 +42,13 @@ class _MainPageState extends State<MainPage>
 
   getLocation() async {
     locationData = await location.getLocation();
+    setState(() {});
   }
 
   checkLocation() async {
     bool enabled = await location.serviceEnabled();
     if (enabled) {
-      await getLocation();
+      getLocation();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text("Please turn on location",
@@ -57,7 +58,6 @@ class _MainPageState extends State<MainPage>
         await getLocation();
       }
     }
-    setState(() {});
   }
 
   @override
@@ -120,7 +120,7 @@ class _MainPageState extends State<MainPage>
                           weatherState.weatherData == null) {
                         return const Scaffold(
                           backgroundColor: Color(0xff000918),
-                          body:  Center(child:  CircularProgressIndicator()),
+                          body: Center(child: CircularProgressIndicator()),
                         );
                       }
                       return Scaffold(

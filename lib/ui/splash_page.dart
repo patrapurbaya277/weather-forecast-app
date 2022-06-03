@@ -13,50 +13,49 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  final Location _location = Location();
-  PermissionStatus? _permissionGranted;
-
   initLocation() async {
-    bool _serviceEnabled;
-    _serviceEnabled = await _location.serviceEnabled();
-    if (!_serviceEnabled) {
+    final Location _location = Location();
+    bool? _serviceEnabled = await _location.serviceEnabled();
+    if (_serviceEnabled) {
       _serviceEnabled = await _location.requestService();
       if (!_serviceEnabled) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("Cannot running app without location", style: TextStyle(color: Colors.white)),
+          content: Text("Cannot running app without location",
+              style: TextStyle(color: Colors.white)),
         ));
         SystemNavigator.pop();
       }
     }
 
-    _permissionGranted = await _location.hasPermission();
+    PermissionStatus? _permissionGranted = await _location.hasPermission();
     if (_permissionGranted == PermissionStatus.deniedForever) {
       // _alert();
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text(
-            "Cannot running app without location, Please grant access location manually from your app settings", style: TextStyle(color: Colors.white)),
+            "Cannot running app without location, Please grant access location manually from your app settings",
+            style: TextStyle(color: Colors.white)),
       ));
       SystemNavigator.pop();
     } else if (_permissionGranted == PermissionStatus.denied) {
       _permissionGranted = await _location.requestPermission();
       if (_permissionGranted != PermissionStatus.granted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("Cannot running app without location", style: TextStyle(color: Colors.white)),
+          content: Text("Cannot running app without location",
+              style: TextStyle(color: Colors.white)),
         ));
         SystemNavigator.pop();
       }
-    } else {
-      Future.delayed(const Duration(seconds: 2), () {
-        Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const MainPage()));
-      });
     }
+    Future.delayed(const Duration(seconds: 2), () {
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const MainPage()));
+    });
   }
 
   @override
   void initState() {
-    super.initState();
     initLocation();
+    super.initState();
   }
 
   @override

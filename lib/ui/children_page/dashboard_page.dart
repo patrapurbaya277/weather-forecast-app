@@ -204,19 +204,6 @@ class _DashboardPageState extends State<DashboardPage> {
                     const Text("Wind Speed", style:  TextStyle(color: Colors.white))
                   ],
                 ),
-                // Column(
-                //   children:  [
-                //     FaIcon(FontAwesomeIcons.cloudRain, color: Colors.white),
-                //     SizedBox(height: 4),
-                //     Text("${state.weatherData!.current!.weather.}%",
-                //         style: TextStyle(
-                //             color: Colors.white,
-                //             fontWeight: FontWeight.bold,
-                //             fontSize: 16)),
-                //     Text("Chance of rain",
-                //         style: TextStyle(color: Colors.white))
-                //   ],
-                // ),
                 Column(
                   children:  [
                     const FaIcon(FontAwesomeIcons.droplet, color: Colors.white),
