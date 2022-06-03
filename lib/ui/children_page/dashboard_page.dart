@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
-import 'package:location/location.dart';
+// import 'package:location/location.dart';
 import 'package:weather_forecast_app/ui/children_page/cubit/weather_cubit.dart';
 import 'package:weather_forecast_app/ui/main_page/cubit/main_cubit.dart';
 import 'package:weather_forecast_app/ui/widgets/hourly_item.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class DashboardPage extends StatefulWidget {
-  final LocationData locationData;
+  final Position locationData;
   const DashboardPage({Key? key, required this.locationData}) : super(key: key);
 
   @override
@@ -51,8 +52,8 @@ class _DashboardPageState extends State<DashboardPage> {
                     const SizedBox(height: 8),
                     TextButton(
                       onPressed: () {
-                        cubit.refreshData(widget.locationData.longitude!,
-                            widget.locationData.latitude!);
+                        cubit.refreshData(widget.locationData.longitude,
+                            widget.locationData.latitude);
                       },
                       child: const Icon(Icons.refresh, color: Colors.lightBlue),
                     ),

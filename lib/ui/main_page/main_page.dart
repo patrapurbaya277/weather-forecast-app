@@ -2,7 +2,8 @@ import 'package:fancy_drawer/fancy_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:location/location.dart';
+import 'package:geolocator/geolocator.dart';
+// import 'package:location/location.dart';
 import 'package:weather_forecast_app/service/local/pref.dart';
 import 'package:weather_forecast_app/ui/children_page/cubit/weather_cubit.dart';
 import 'package:weather_forecast_app/ui/children_page/dashboard_page.dart';
@@ -19,8 +20,11 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage>
     with SingleTickerProviderStateMixin {
   late FancyDrawerController _controller;
-  final Location location = Location();
-  LocationData? locationData;
+  // final Location location = Location();
+  // LocationData? locationData;
+  final GeolocatorPlatform location = GeolocatorPlatform.instance;
+  // LocationPermission? locationData;
+  Position? locationData;
 
   @override
   void initState() {
@@ -41,19 +45,19 @@ class _MainPageState extends State<MainPage>
   }
 
   getLocation() async {
-    locationData = await location.getLocation();
+    locationData = await location.getCurrentPosition();
     setState(() {});
   }
 
   checkLocation() async {
-    bool enabled = await location.serviceEnabled();
+    bool enabled = await location.isLocationServiceEnabled();
     if (enabled) {
       getLocation();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text("Please turn on location",
               style: TextStyle(color: Colors.white))));
-      bool isTurnedOn = await location.requestService();
+      bool isTurnedOn = await location.isLocationServiceEnabled();
       if (isTurnedOn) {
         await getLocation();
       }
@@ -112,7 +116,7 @@ class _MainPageState extends State<MainPage>
                   child: BlocProvider<WeatherCubit>(
                     create: (context) => WeatherCubit()
                       ..fetchData(
-                          locationData!.longitude!, locationData!.latitude!),
+                          locationData!.longitude, locationData!.latitude),
                     child: BlocBuilder<WeatherCubit, WeatherState>(
                         builder: (context, weatherState) {
                       final weatherCubit = context.read<WeatherCubit>();
@@ -127,8 +131,8 @@ class _MainPageState extends State<MainPage>
                         body: RefreshIndicator(
                           onRefresh: () async {
                             await weatherCubit.refreshData(
-                                locationData!.longitude!,
-                                locationData!.latitude!);
+                                locationData!.longitude,
+                                locationData!.latitude);
                           },
                           child: Stack(
                             children: [
@@ -179,8 +183,8 @@ class _MainPageState extends State<MainPage>
                                         child: const Text("Refresh"),
                                         onTap: () {
                                           weatherCubit.refreshData(
-                                              locationData!.longitude!,
-                                              locationData!.latitude!);
+                                              locationData!.longitude,
+                                              locationData!.latitude);
                                         },
                                       ),
                                     ],
